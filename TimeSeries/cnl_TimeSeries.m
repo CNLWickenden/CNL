@@ -67,12 +67,11 @@ classdef cnl_TimeSeries < handle
             %return a matrix of starting and ending indices corresponding
             %to the given epochs; can be used to do a custom trial by trial
             %analysis
-            idx=zeros(size(epochs,1),2);
-            for i=1:size(epochs,1)
-                idx(i,1)= find(obj.timeline == epochs(i,1));
-                idx(i,2)= find(obj.timeline == epochs(i,size(epochs(i,:));
-            end
-            
+%             idx=zeros(size(epochs,1),2);
+%             for i=1:size(epochs,1)
+%                 idx(i,1)= find(obj.timeline == epochs(i,1));
+%                 idx(i,2)= find(obj.timeline == epochs(i,size(epochs(i,:)));
+%             end
         end
         
         function newTS = resampleToTimeline(obj, newTimeline, interpFnc)
