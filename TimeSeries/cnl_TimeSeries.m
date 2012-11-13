@@ -9,7 +9,7 @@ classdef cnl_TimeSeries < handle
     end
 
     methods
-        function obj = cnl_TimeSeries(timeline,signal)
+        function obj = cnl_TimeSeries(signal,timeline)
             if nargin > 1
                 %make sure timeline is a vector
                 if ~isvector(timeline)
