@@ -9,15 +9,14 @@ classdef cnl_TimeSeries < handle
     end
 
     methods
-        function obj = cnl_TimeSeries(signal, timeline)
+        function obj = cnl_TimeSeries(timeline,signal)
             if nargin > 1
                 %make sure timeline is a vector
                 if ~isvector(timeline)
                     error('Timeline must be a vector');
                 end
-                
                 %check that the dimensions of timeline and signal match
-                if length(timeline) ~= size(signal,1)
+                if length(timeline) ~= length(signal(1,:))
                     error('Timeline must have the same length as the number of rows in the signal');
                 end
                 
@@ -63,15 +62,17 @@ classdef cnl_TimeSeries < handle
             newTS = cnl_TimeSeries(obj.signal(idx,:), obj.timeline(idx));
         end
         
-        function idx = getIdxInEpochs(obj, epochs)
+        
             %return a matrix of starting and ending indices corresponding
             %to the given epochs; can be used to do a custom trial by trial
-            %analysis
-%             idx=zeros(size(epochs,1),2);
-%             for i=1:size(epochs,1)
-%                 idx(i,1)= find(obj.timeline == epochs(i,1));
-%                 idx(i,2)= find(obj.timeline == epochs(i,size(epochs(i,:)));
-%             end
+            %only returns the indicies pointing to the first closest found
+            %time
+        function idx = getIdxInEpochs(obj, epochs)
+               idx=zeros(size(epochs,1),2);
+               for i=1:size(epochs,1)
+               [tmp idx(i,1)] = min(abs(obj.timeline - epochs(i,1)));
+               [tmp idx(i,2)] = min(abs(obj.timeline - epochs(i,2)));
+               end
         end
         
         function newTS = resampleToTimeline(obj, newTimeline, interpFnc)

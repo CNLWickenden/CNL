@@ -15,7 +15,6 @@ classdef cnl_TimeSeries < handle
                 if ~isvector(timeline)
                     error('Timeline must be a vector');
                 end
-                
                 %check that the dimensions of timeline and signal match
                 if length(timeline) ~= size(signal,1)
                     error('Timeline must have the same length as the number of rows in the signal');
@@ -67,12 +66,13 @@ classdef cnl_TimeSeries < handle
             %return a matrix of starting and ending indices corresponding
             %to the given epochs; can be used to do a custom trial by trial
             %analysis
-            idx=zeros(size(epochs,1),2);
-            for i=1:size(epochs,1)
-                idx(i,1)= find(obj.timeline == epochs(i,1));
-                idx(i,2)= find(obj.timeline == epochs(i,size(epochs(i,:));
-            end
-            
+           idx=zeros(size(epochs,1),2);
+           for i =1:size(epochs,1)
+               [c index] = min(abs(obj.timeline - epochs(i,1)));
+               idx(i,1) = index;
+               [c index2] = min(abs(obj.timeline - epochs(i,2)));
+               idx(i,2) = index2;
+           end
         end
         
         function newTS = resampleToTimeline(obj, newTimeline, interpFnc)
