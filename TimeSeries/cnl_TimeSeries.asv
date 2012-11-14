@@ -9,14 +9,14 @@ classdef cnl_TimeSeries < handle
     end
 
     methods
-        function obj = cnl_TimeSeries(signal, timeline)
+        function obj = cnl_TimeSeries(signal,timeline)
             if nargin > 1
                 %make sure timeline is a vector
                 if ~isvector(timeline)
                     error('Timeline must be a vector');
                 end
                 %check that the dimensions of timeline and signal match
-                if length(timeline) ~= size(signal,1)
+                if length(timeline) ~= length(signal(1,:))
                     error('Timeline must have the same length as the number of rows in the signal');
                 end
                 
@@ -52,7 +52,7 @@ classdef cnl_TimeSeries < handle
             %occur within the specified time epochs
             
             %to do so we'll build a vector of the correct indices
-            idx = [];
+            idx = zeros(size(epochs));
             for e=1:size(epochs,1)
                 idx = [idx find(obj.timeline >= epochs(e,1) & obj.timeline <= epochs(e,2))];
             end
@@ -62,28 +62,30 @@ classdef cnl_TimeSeries < handle
             newTS = cnl_TimeSeries(obj.signal(idx,:), obj.timeline(idx));
         end
         
-        function idx = getIdxInEpochs(obj, epochs)
+        
             %return a matrix of starting and ending indices corresponding
             %to the given epochs; can be used to do a custom trial by trial
-            %analysis
-           idx=zeros(size(epochs,1),2);
-           for i =1:size(epochs,1)
-               [c index] = min(abs(obj.timeline - epochs(i,1)));
-               idx(i,1) = index;
-               [c index2] = min(abs(obj.timeline - epochs(i,2)));
-               idx(i,2) = index2;
-           end
+            %only returns the indicies pointing to the first closest found
+            %time
+        function idx = getIdxInEpochs(obj, epochs)
+               idx=zeros(size(epochs,1),2);
+               for i=1:size(epochs,1)
+               [~, idx(i,1)] = min(abs(obj.timeline - epochs(i,1)));
+               [~, idx(i,2)] = min(abs(obj.timeline - epochs(i,2)));
+               end
         end
         
         function newTS = resampleToTimeline(obj, newTimeline, interpFnc)
             %return a time series object resampled to the given time line
         end
         
-        function data = computeByEpoch(obj, epochs, fnc)
             %apply the given fnc to the signal in each epoch; fnc can
             %return one variable, which is stored in a cell array 'data'
             %and passed as output
             %Ex: calculate the mean signal in each epoch
+        function data = computeByEpoch(obj, epochs, fnc)
+            indices = getIdxInEpochs(obj,epochs);
+            
         end
         
         function modifySignalByEpoch(obj, epochs, fnc)
@@ -111,6 +113,7 @@ classdef cnl_TimeSeries < handle
         end
         
         function integrate(obj)
+            obj.signal = trapz(obj.signal);
             %do trapezoidal numerical integration on each column of signal,
             %resulting in a new integrated signal on the same timeline
         end

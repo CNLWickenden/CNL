@@ -2,43 +2,38 @@ classdef cnl_Epochs < handle
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties (GetAccess = 'private',SetAccess = 'private')
+    properties 
         epochs = [] %Nx2 matrix, where n is the number of epochs
     end
     
     methods 
        
         
-        
+        % Constructor
+        % timeWindows - A Nx2 matrix of times [start,finish]
         function obj = cnl_Epochs(timeWindows) 
-            if(size(timeWindows(1,:) == [1,2]))
-                obj.epochs = timeWindows;
+            if((length(timeWindows(1,:)) ~= 2) && (~isvector(timeWindows)))
+                error('The time windows must be a N x2 matrix or a vector of times');
             else
-                error('The time windows must be a N x2 matrix');
+                if(length(timeWindows(1,:)) ~=2)
+                    obj.epochs = timeWindows;
+                else
+                    obj.epochs = zeros(length(timeWindows)-1),
+                    for i=1:length(timeWindows)
+                        
+                   
             end
         end
         
-        function setEpochs(obj,epochs)
-            if(size(epochs(1,:) == [1,2]))
-                obj.epochs = epochs;
-            else
+        %Returns the epochs
+        function set.epochs(obj,epochs)
+            if(length(epochs(1,:)) ~= 2)
                 error('The epoch must be a N x2 matrix');
+            else
+                obj.epochs = epochs;
             end
         end
-        
-        function 
-        
-%         function epochs = getEpochs(obj)
-%             epochs = obj.epochs;
-%         end 
-        
-        %construct epochs from a series of times
-        
-        %intersect epochs
-        
-        %union epochs
-        
-        
+           
         
     end
     

@@ -36,7 +36,7 @@ classdef cnl_TimeSeries < handle
                 error('When setting the signal manually, the size cannot be changed. Create a new object instead.');
             end        
             obj.signal = signal;
-        end % set.signal
+        end
 
         function set.timeline(obj,timeline)
             %the dimensions of timeline cannot be changed when manually set by
@@ -45,14 +45,13 @@ classdef cnl_TimeSeries < handle
                 error('When setting the timeline manually, the size cannot be changed. Create a new object instead.');
             end        
             obj.timeline = timeline;
-        end % set.timeline
+        end 
         
-        function newTS = getSeriesInEpochs(obj, epochs)
             %return a time series object with only the data points that
             %occur within the specified time epochs
-            
             %to do so we'll build a vector of the correct indices
-            idx = [];
+        function newTS = getSeriesInEpochs(obj, epochs)
+            idx = zeros(size(epochs));
             for e=1:size(epochs,1)
                 idx = [idx find(obj.timeline >= epochs(e,1) & obj.timeline <= epochs(e,2))];
             end
@@ -70,30 +69,31 @@ classdef cnl_TimeSeries < handle
         function idx = getIdxInEpochs(obj, epochs)
                idx=zeros(size(epochs,1),2);
                for i=1:size(epochs,1)
-               [tmp idx(i,1)] = min(abs(obj.timeline - epochs(i,1)));
-               [tmp idx(i,2)] = min(abs(obj.timeline - epochs(i,2)));
+               [~, idx(i,1)] = min(abs(obj.timeline - epochs(i,1)));
+               [~, idx(i,2)] = min(abs(obj.timeline - epochs(i,2)));
                end
         end
         
-        function newTS = resampleToTimeline(obj, newTimeline, interpFnc)
             %return a time series object resampled to the given time line
+        function newTS = resampleToTimeline(obj, newTimeline, interpFnc)
         end
         
-        function data = computeByEpoch(obj, epochs, fnc)
             %apply the given fnc to the signal in each epoch; fnc can
             %return one variable, which is stored in a cell array 'data'
             %and passed as output
             %Ex: calculate the mean signal in each epoch
+        function data = computeByEpoch(obj, epochs, fnc)
+            indices = getIdxInEpochs(obj,epochs);
+            data = fnc(obj.signal(indices(:,1),indices(:,2)));
         end
         
-        function modifySignalByEpoch(obj, epochs, fnc)
             %fnc acts on the signal and returns a modified signal, which is
             %stored back into obj.signal
             %this way, the signal can easily be modified on a trial by
             %trial basis by calling this function
+        function modifySignalByEpoch(obj, epochs, fnc)
         end
         
-        function makeDesignMatrix(obj, epochs, lags, leads)
             %makes a 'design' matrix from the data in signal so that a
             %linear regression can be done using that data as a predictor
             %variable, using only the data in the time windows specified by
@@ -103,16 +103,17 @@ classdef cnl_TimeSeries < handle
             %if leads>0, use that many data points in the future. However,
             %use no data points where the full lags and leads cannot be
             %collected by sticking to data only in the specified epcohs.
+        function makeDesignMatrix(obj, epochs, lags, leads)
         end
         
-        function differentiate(obj, nPoint)
             %do an nPoint numerical differentiation on each column of the signal,
             %resulting in a new differentiated signal with the same timeline
+        function differentiate(obj, nPoint)
         end
         
-        function integrate(obj)
             %do trapezoidal numerical integration on each column of signal,
             %resulting in a new integrated signal on the same timeline
+        function integrate(obj)
         end
     end
 end
