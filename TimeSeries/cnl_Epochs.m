@@ -8,15 +8,17 @@ classdef cnl_Epochs < handle
     
     methods 
        
-        
+        %make something 00001110000 and takes a vector of times return
+        %timewindow first 1 = start last 1 = finish, ignore 0's and 1's
+        %inbetween
         % Constructor
         % timeWindows - A Nx2 matrix of times [start,finish] or a vector of
         % time events
-        function obj = cnl_Epochs(timeWindows) 
-            if((length(timeWindows(1,:)) ~= 2) && (~isvector(timeWindows)))
+        function obj = cnl_Epochs(timeWindows,times) 
+            if((size(timeWindows,2) ~= 2) && (~isvector(timeWindows)))
                 error('The time windows must be a N x2 matrix or a vector of times');
             else
-                if(length(timeWindows(1,:)) ==2)
+                if(size(timeWindows,2) ==2)
                     obj.epochs = timeWindows;
                 else
                     obj.epochs = zeros((length(timeWindows)-1),2);
@@ -29,7 +31,7 @@ classdef cnl_Epochs < handle
         
         %Returns the epochs
         function set.epochs(obj,epochs)
-            if(length(epochs(1,:)) ~= 2)
+            if(size(epochs,2) ~= 2)
                 error('The epoch must be a N x2 matrix');
             else
                 obj.epochs = epochs;
