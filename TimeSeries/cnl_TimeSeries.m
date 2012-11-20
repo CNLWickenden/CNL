@@ -52,16 +52,16 @@ classdef cnl_TimeSeries < handle
         %occur within the specified time epochs
         %to do so we'll build a vector of the correct indices
         
-        %TEST THIS
+        %FIXED AND TESTED
         function newTS = getSeriesInEpochs(obj, epochs)
-            idx = zeros(size(epochs));
-            for e=1:size(epochs,1)
-                idx = [idx find(obj.timeline >= epochs(e,1) & obj.timeline <= epochs(e,2))];
+            idx = zeros(size(epochs.epochs));
+            for e=1:size(epochs.epochs,1)
+                [~, idx] = find(obj.timeline >= epochs.epochs(e,1) & obj.timeline <= epochs.epochs(e,2));
             end
             
             %now return a handle to a new time series object with only
             %those points
-            newTS = cnl_TimeSeries(obj.signal(idx,:), obj.timeline(idx));
+            newTS = cnl_TimeSeries(obj.signal(:,idx), obj.timeline(idx));
         end
         
         
@@ -71,60 +71,18 @@ classdef cnl_TimeSeries < handle
         %only returns the indicies pointing to the first closest found
         %time
         
-        %PASS IN EPOCHS OBJECT
+        %ABLE TO PASS IN EPOCHS OBJECT
         function timeFound = getIdxInEpochs(obj, epochs)
-            
-            tic
-            timeFound =zeros(size(epochs,1),2);
-            for row=1:size(epochs,1)
-                for col=1:2
-                    if(col == 2)
-                        start = last;
-                    else
-                        start = 1;
-                    end
-                    last = length(obj.timeline);
-                    
-                    %TODO: MAKE BINARY SEARCH FUNCTION
-                    %SEE IF YOU CAN FIND MEX FILE FOR BINARY SEARCH
-                    while(start <= last)
-                        middle= floor((last + start)/2);
-                        if(epochs(row,col) < obj.timeline(middle))
-                            last = middle -1;
-                        elseif(epochs(row,col) > obj.timeline(middle))
-                            start = middle +1;
-                        else
-                            timeFound(row,col) = obj.timeline(middle);
-                            break
-                        end
-                    end
-                    %WRITE IN FEWER LINES?
-                    if(timeFound(row,col) == 0)
-                        timeMatrix= zeros(1,2);
-                        timeMatrix(1,1) = obj.timeline(last);
-                        timeMatrix(1,2) = obj.timeline(start);
-                        timeMatrix= abs(timeMatrix- epochs(row,col));
-                        index = find(min(timeMatrix));
-                        if(index == 1)
-                            timeFound(row,col) = last;
-                        else
-                            timeFound(row,col) = start;
-                        end
-                    end
-                end
-            end
-            toc
+            timeFound = binarySearch(obj,epochs.epochs);
         end
         
         
         function idx = getIdxInEpochs2(obj, epochs)
-            tic
             idx=zeros(length(epochs),2);
             for i=1:size(epochs,1)
                 [~, idx(i,1)] = min(abs(obj.timeline - epochs(i,1)));
                 [~, idx(i,2)] = min(abs(obj.timeline(idx(i,1):length(obj.timeline)) - epochs(i,2)));
             end
-            toc
         end
         
         
