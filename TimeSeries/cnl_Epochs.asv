@@ -1,0 +1,93 @@
+classdef cnl_Epochs < handle
+    %UNTITLED Summary of this class goes here
+    %   Detailed explanation goes here
+    
+    properties
+        epochs = [] %Nx2 matrix, where n is the number of epochs
+    end
+    
+    methods
+        
+        %make something 00001110000 and takes a vector of times return
+        %timewindow first 1 = start last 1 = finish, ignore 0's and 1's
+        %inbetween
+        % Constructor
+        % timeWindows - A Nx2 matrix of times [start,finish] or a vector of
+        % time events
+        function obj = cnl_Epochs(timeWindows,times)
+            if(nargin == 2)
+                if(~isvector(timeWindows))
+                    error('If using two arguments, the second argument must be a string of 0''s and 1''s');
+                else
+                    startTimes = zeros(round(length(timeWindows)/2),1); %least possible columns would be alternating 1's 0's which is round(length/2)
+                    lastTimes = zeros(round(length(timeWindows)/2),1);
+                    col = 1;
+                    startIdx = 1;
+                    numberOfTimes = 0;
+                    lastIdx = length(timeWindows);
+                    while(startIdx < lastIdx) % go until start == end
+                        if(timeWindows(startIdx) == '1') % checks if found a 1 at the index
+                            if(timeWindows(startIdx +1) == '0')% have only one bin time(not most likely gonna happen)
+                                startTimes(col) = times(startIdx);
+                                lastTimes(col) = times(startIdx);
+                                startIdx = startIdx + 2;
+                                numberOfTimes = numberOfTimes +1;
+                                col = col + 1;
+                            else % found another one so start counting
+                                lastOne = startIdx +1;
+                                while(lastOne <length(timeWindows) && timeWindows(lastOne+1) == '1') % makes sure it hasn't reached the end and checks for 1's
+                                    lastOne= lastOne +1;
+                                end
+                                startTimes(col) = times(startIdx);
+                                lastTimes(col) = times(lastOne);
+                                startIdx = lastOne + 2;
+                                col = col +1;
+                                numberOfTimes = numberOfTimes +1;
+                            end
+                        else
+                            startIdx = startIdx +1; 
+                        end
+                    end
+                    if(startIdx> lastIdx)
+                    else
+                        if(timeWindows(lastIdx - 1) == '0')
+                            startTimes(col) = times(lastIdx);
+                            lastTimes(col) = times(lastIdx);
+                            numberOfTimes = numberOfTimes +1;
+                        end
+                    end
+                    
+                    
+                    obj.epochs = [startTimes(1:numberOfTimes) lastTimes(1:numberOfTimes)];
+                end
+            else
+                if((size(timeWindows,2) ~= 2) && (~isvector(timeWindows)))
+                    error('The time windows must be a N x2 matrix or a vector of times');
+                else
+                    if(size(timeWindows,2) ==2)
+                        obj.epochs = timeWindows;
+                    else
+                        obj.epochs = zeros((length(timeWindows)-1),2);
+                        obj.epochs(:,1) = timeWindows(1:length(timeWindows) -1);
+                        obj.epochs(:,2) = timeWindows(2:length(timeWindows));
+                    end
+                end
+            end
+        end
+        
+        
+        %Returns the epochs
+        function set.epochs(obj,epochs)
+            if(size(epochs,2) ~= 2)
+                error('The epoch must be a N x2 matrix');
+            else
+                obj.epochs = epochs;
+            end
+        end
+        
+        
+    end
+    
+    
+end
+
