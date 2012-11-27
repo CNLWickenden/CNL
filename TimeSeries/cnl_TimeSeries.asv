@@ -141,8 +141,7 @@ classdef cnl_TimeSeries < handle
             %cursorVel and timeline equal to binTime and the run the function:
             %I get an average difference of -3.9094e-004 for the difference
             %in the integrated values and the actual cursorPos values in
-            %the TestData. I just need to fix the parameters of the
-            %function and make work efficently.
+            %the TestData. I just need to fix t
             for i=1:(length(obj.timeline)-1)
                     s=s+(.5)*(obj.timeline(i+1)-obj.timeline(i))*(obj.signal(i)+obj.signal(i+1));
                     obj.signal(i+1)=s;
