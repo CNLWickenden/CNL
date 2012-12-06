@@ -17,7 +17,7 @@ classdef cnl_TimeSeries < handle
                 end
                 %check that the dimensions of timeline and signal match
                 %CHANGE BACK TO SIZE
-                if length(timeline) ~= length(signal(1,:))
+                if length(timeline) ~= size(signal,1)
                     error('Timeline must have the same length as the number of rows in the signal');
                 end
                 
@@ -130,6 +130,8 @@ classdef cnl_TimeSeries < handle
         function differentiate(obj, nPoint)
         end
         
+        %TODO: ability to do multivariable signal
+        %TODO: Compare to trapz or cumtrapz
         %do trapezoidal numerical integration on each column of signal,
         %resulting in a new integrated signal on the same timeline
         function integrate(obj)

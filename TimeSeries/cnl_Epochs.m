@@ -19,7 +19,7 @@ classdef cnl_Epochs < handle
                 if(~isvector(timeWindows) && ~isvector(times) && length(times) ~= length(timeWindows))
                     error('If using two arguments, the first argument must be a string of 0''s and 1''s and the second must be a vector of times equal in length to the string vector');
                 else
-                    zerosAndOnesToEpochs(timeWindows,times);
+                    obj.epochs = zerosAndOnesToEpochs(timeWindows,times);
                 end
             else
                 if((size(timeWindows,2) ~= 2) && (~isvector(timeWindows)))

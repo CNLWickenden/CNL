@@ -1,0 +1,18 @@
+function [ epochs ] = logicalToEpochs( lString )
+%in a string of logicals, converts the contiguous blocks of 1s to a matrix
+%of epochs (start and end bins) 
+lStringMarks = diff(lString);
+strtIdx = find(lStringMarks==1)+1;
+endIdx = find(lStringMarks==-1);
+
+if lString(1) == 1
+    strtIdx = [1 strtIdx];
+end
+
+if lString(end) == 1
+    endIdx = [endIdx length(lString)];
+end
+
+epochs = [strtIdx' endIdx'];
+end
+

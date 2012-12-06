@@ -1,5 +1,5 @@
 %SET CORRECT BASE PATH HERE
-fileInfo.basePath = 'C:\Users\Frank\Documents\1_BigData\';
+fileInfo.basePath = 'C:\Documents and Settings\CNL\My Documents\GitHub\CNL\WinnieExample\';
 fileInfo.subjectCode = 'WNR';
 date = {'121121'};
 run = {'003'};
